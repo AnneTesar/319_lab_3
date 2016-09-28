@@ -1,15 +1,19 @@
 <html>
 <head>
-<script src="calculator.js"> 
-</script>
+<script src="calculator.js"></script>
+<script src="calculatorbinary.js"></script>
 </head>
 <body>
 <div id="calculator">
 </div>
 
+<div id="calculatorbinary">
+</div>
+
 
 <script>
 document.getElementById("calculator").innerHTML = Calc.run();
+document.getElementById("calculatorbinary").innerHTML = CalcBinary.run();
 </script>
 </body>
 </html>
