@@ -36,11 +36,24 @@ View : {
 },
 
 Memory : {
-  memoryValue : {value:""},
+  memoryValue : {value: 0, reset:function(){this.value=0;}},
   firstValue : {value: ""},
   secondValue : {value: ""},
   operation : {value: ""},
-  currentValue : {value: 0, firstHalf: 0, secondHalf: 0, hasDecimal: false, reset:function() {this.value=0; this.firstHalf=0; this.secondHalf=0; this.hasDecimal=false;}}
+  currentValue : {value: 0, 
+	  			  firstHalf: 0, 
+	  			  secondHalf: 0, 
+	  			  hasDecimal: false, 
+	  			  reset:function() {
+	  				  this.value=0; 
+	  				  this.firstHalf=0; 
+	  				  this.secondHalf=0; 
+	  				  this.hasDecimal=false;}},
+  clear: function() {
+	  this.firstValue.value=""; 
+	  this.secondValue.value="";
+	  this.operation.value=""; 
+	  this.currentValue.reset();}
 },
 
 Controller : {
@@ -100,7 +113,7 @@ display : function() {
   return s;
 },
 
-addToTextRow : function(newNum) {
+addToNumber : function(newNum) {
 	if (Calc.Memory.currentValue.hasDecimal) {
 		Calc.Memory.currentValue.secondHalf = ( Calc.Memory.currentValue.secondHalf * 10 ) + newNum;
 		Calc.Memory.currentValue.value = Calc.Memory.currentValue.firstHalf + "." + Calc.Memory.currentValue.secondHalf;
@@ -117,6 +130,13 @@ addToTextRow : function(newNum) {
 
 doCalcuation : function() {
 	var val;
+	
+	if (Calc.Memory.operation.value == "") {
+		Calc.Memory.operation.value = "+";
+	}
+
+	console.log("calculating: " + Calc.Memory.firstValue.value + Calc.Memory.operation.value + Calc.Memory.secondValue.value);
+	
 	if (Calc.Memory.operation.value == "+") {
 		val = Calc.Memory.firstValue.value + Calc.Memory.secondValue.value;
 	}
@@ -157,7 +177,7 @@ attachHandlers : function() {
 },
 
 buttonAddHandler : function() {
-  Calc.Memory.firstValue.value = Calc.Memory.currentValue.value;
+  Calc.Memory.secondValue.value = Calc.Memory.currentValue.value;
   Calc.Memory.operation.value = "+";
   Calc.View.textRow.value = "";
   Calc.Memory.currentValue.reset();
@@ -165,7 +185,7 @@ buttonAddHandler : function() {
 },
 	
 buttonSubtractHandler : function() {
-  Calc.Memory.firstValue.value = Calc.Memory.currentValue.value;
+  Calc.Memory.secondValue.value = Calc.Memory.currentValue.value;
   Calc.Memory.operation.value = "-";
   Calc.View.textRow.value = "";
   Calc.Memory.currentValue.reset();
@@ -173,7 +193,7 @@ buttonSubtractHandler : function() {
 },
 
 buttonMultiplyHandler : function() {
-  Calc.Memory.firstValue.value = Calc.Memory.currentValue.value;
+  Calc.Memory.secondValue.value = Calc.Memory.currentValue.value;
   Calc.Memory.operation.value = "*";
   Calc.View.textRow.value = "";
   Calc.Memory.currentValue.reset();
@@ -181,7 +201,7 @@ buttonMultiplyHandler : function() {
 },
 
 buttonDivideHandler : function() {
-  Calc.Memory.firstValue.value = Calc.Memory.currentValue.value;
+  Calc.Memory.secondValue.value = Calc.Memory.currentValue.value;
   Calc.Memory.operation.value = "/";
   Calc.View.textRow.value = "";
   Calc.Memory.currentValue.reset();
@@ -197,85 +217,90 @@ buttonDecimalHandler : function() {
 },
 
 buttonEqualsHandler : function() {
+  Calc.Memory.firstValue.value = Calc.Memory.secondValue.value;
   Calc.Memory.secondValue.value = Calc.Memory.currentValue.value;
-  Calc.Memory.currentValue.reset();
-  Calc.View.textRow.value = Calc.doCalcuation();
+  var num = Calc.doCalcuation();
+  Calc.Memory.secondValue.value = num;
+  Calc.View.textRow.value = num;
+  //Calc.Memory.currentValue.reset();
   document.getElementById("textRow").value = Calc.View.textRow.value;
 },
 
 buttonCHandler : function() {
   Calc.View.textRow.value = "";
+  //Calc.Memory.clear();
   Calc.Memory.currentValue.reset();
   document.getElementById("textRow").value = Calc.View.textRow.value;
 },
 			
 buttonMRHandler : function() {
-  //Calc.View.textRow.value = Calc.addToTextRow(7)
+  Calc.View.textRow.value = Calc.Memory.memoryValue.value;
+  //Calc.Memory.currentValue.value = TODO does this need to update current value?
   document.getElementById("textRow").value = Calc.View.textRow.value;
 },
 
 buttonMminusHandler : function() {
-  //Calc.View.textRow.value = Calc.addToTextRow(8)
+  Calc.Memory.memoryValue.value = Calc.Memory.memoryValue.value - Calc.Memory.currentValue.value;
   document.getElementById("textRow").value = Calc.View.textRow.value;
 },
 
 buttonMplusHandler : function() {
-  //Calc.View.textRow.value = Calc.addToTextRow(9)
+  Calc.Memory.memoryValue.value = Calc.Memory.memoryValue.value + Calc.Memory.currentValue.value;
   document.getElementById("textRow").value = Calc.View.textRow.value;
 },
 
 buttonMCHandler : function() {
-  Calc.Memory.memoryValue.value = "";
+  Calc.Memory.memoryValue.reset();
   document.getElementById("textRow").value = Calc.View.textRow.value;
 },
 
 button0Handler : function() {
-  Calc.View.textRow.value = Calc.addToTextRow(0)
+  Calc.View.textRow.value = Calc.addToNumber(0)
   document.getElementById("textRow").value = Calc.View.textRow.value;
 },
 	
 button1Handler : function() {
-  Calc.View.textRow.value = Calc.addToTextRow(1)
+  Calc.View.textRow.value = Calc.addToNumber(1)
   document.getElementById("textRow").value = Calc.View.textRow.value;
 },
 
 button2Handler : function() {
-  Calc.View.textRow.value = Calc.addToTextRow(2)
+  Calc.View.textRow.value = Calc.addToNumber(2)
   document.getElementById("textRow").value = Calc.View.textRow.value;
 },
 
 button3Handler : function() {
-  Calc.View.textRow.value = Calc.addToTextRow(3)
+  Calc.View.textRow.value = Calc.addToNumber(3)
   document.getElementById("textRow").value = Calc.View.textRow.value;
 },
 	
 button4Handler : function() {
-  Calc.View.textRow.value = Calc.addToTextRow(4)
+  Calc.View.textRow.value = Calc.addToNumber(4)
   document.getElementById("textRow").value = Calc.View.textRow.value;
 },
 
 button5Handler : function() {
-  Calc.View.textRow.value = Calc.addToTextRow(5)
+  Calc.View.textRow.value = Calc.addToNumber(5)
   document.getElementById("textRow").value = Calc.View.textRow.value;
 },
 
 button6Handler : function() {
-  Calc.View.textRow.value = Calc.addToTextRow(6)
+  Calc.View.textRow.value = Calc.addToNumber(6)
   document.getElementById("textRow").value = Calc.View.textRow.value;
 },
 			
 button7Handler : function() {
-  Calc.View.textRow.value = Calc.addToTextRow(7)
+  Calc.View.textRow.value = Calc.addToNumber(7)
   document.getElementById("textRow").value = Calc.View.textRow.value;
 },
 
 button8Handler : function() {
-  Calc.View.textRow.value = Calc.addToTextRow(8)
+  Calc.View.textRow.value = Calc.addToNumber(8)
   document.getElementById("textRow").value = Calc.View.textRow.value;
 },
 
 button9Handler : function() {
-  Calc.View.textRow.value = Calc.addToTextRow(9)
+  Calc.View.textRow.value = Calc.addToNumber(9)
   document.getElementById("textRow").value = Calc.View.textRow.value;
 }
 
