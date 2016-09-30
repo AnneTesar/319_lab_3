@@ -235,7 +235,7 @@ buttonCHandler : function() {
 			
 buttonMRHandler : function() {
   Calc.View.textRow.value = Calc.Memory.memoryValue.value;
-  //Calc.Memory.currentValue.value = TODO does this need to update current value?
+  Calc.Memory.currentValue.value = Calc.Memory.memoryValue.value;
   document.getElementById("textRow").value = Calc.View.textRow.value;
 },
 

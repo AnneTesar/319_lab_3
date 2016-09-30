@@ -1,4 +1,4 @@
-// CalcBinaryULATOR.JS
+// CALCULATORBINARY.JS
 //
 //
 //
@@ -11,7 +11,7 @@ Model : {
 
 
 View : {
-  textRow : {id: "textRow", type: "text", value: "", onclick:""},
+  textRow : {id: "textRowBinary", type: "text", value: "", onclick:""},
   button0 : {id: "button0", type: "button", value: 0, onclick:""},
   button1 : {id: "button1", type: "button", value: 1, onclick:""},
   buttonTilde : {id: "buttonTilde", type: "button", value: "~", onclick:""},
@@ -33,11 +33,11 @@ View : {
 },
 
 Memory : {
-  memoryValue : {value:""},
+  memoryValue : {value:0},
   firstValue : {value: ""},
   secondValue : {value: ""},
   operation : {value: ""},
-  currentValue : {value: 0, firstHalf: 0, secondHalf: 0, hasDecimal: false, reset:function() {this.value=0; this.firstHalf=0; this.secondHalf=0; this.hasDecimal=false;}}
+  currentValue : {value: 0, string:"", reset:function() {this.value=0; this.string="";}}
 },
 
 Controller : {
@@ -94,38 +94,6 @@ display : function() {
   return s;
 },
 
-addToTextRow : function(newNum) {
-	if (CalcBinary.Memory.currentValue.hasDecimal) {
-		CalcBinary.Memory.currentValue.secondHalf = ( CalcBinary.Memory.currentValue.secondHalf * 10 ) + newNum;
-		CalcBinary.Memory.currentValue.value = CalcBinary.Memory.currentValue.firstHalf + "." + CalcBinary.Memory.currentValue.secondHalf;
-		console.log("CalcBinary.Memory.currentValue.value: " + CalcBinary.Memory.currentValue.value);
-		return CalcBinary.Memory.currentValue.value;
-	}
-	else {
-		CalcBinary.Memory.currentValue.firstHalf = ( CalcBinary.Memory.currentValue.firstHalf * 10 ) + newNum;
-		CalcBinary.Memory.currentValue.value = CalcBinary.Memory.currentValue.firstHalf;
-		return CalcBinary.Memory.currentValue.value;
-	}
-	
-},
-
-doCalcBinaryuation : function() {
-	var val;
-	if (CalcBinary.Memory.operation.value == "+") {
-		val = CalcBinary.Memory.firstValue.value + CalcBinary.Memory.secondValue.value;
-	}
-	else if (CalcBinary.Memory.operation.value == "-") {
-		val = CalcBinary.Memory.firstValue.value - CalcBinary.Memory.secondValue.value;
-	}
-	else if (CalcBinary.Memory.operation.value == "*") {
-		val = CalcBinary.Memory.firstValue.value * CalcBinary.Memory.secondValue.value;
-	}
-	else if (CalcBinary.Memory.operation.value == "/") {
-		val = CalcBinary.Memory.firstValue.value / CalcBinary.Memory.secondValue.value;
-	}
-	return val;
-},
-
 attachHandlers : function() {
   CalcBinary.View.button0.onclick = "CalcBinary.button0Handler()";
   CalcBinary.View.button1.onclick = "CalcBinary.button1Handler()";
@@ -147,12 +115,45 @@ attachHandlers : function() {
   CalcBinary.View.buttonEquals.onclick = "CalcBinary.buttonEqualsHandler()";
 },
 
+addToNumber : function(num) {
+	CalcBinary.Memory.currentValue.string += num;
+	CalcBinary.Memory.currentValue.value = parseInt(CalcBinary.Memory.currentValue.string, 2);
+	console.log("CurrentValue: " + CalcBinary.Memory.currentValue.value);
+	return CalcBinary.Memory.currentValue.string;
+},
+
+doCalculation : function() {
+	var val;
+	if (CalcBinary.Memory.operation.value == "&") {
+		val = CalcBinary.Memory.firstValue.value & CalcBinary.Memory.secondValue.value;
+	}
+	else if (CalcBinary.Memory.operation.value == "|") {
+		val = CalcBinary.Memory.firstValue.value | CalcBinary.Memory.secondValue.value;
+	}
+	else if (CalcBinary.Memory.operation.value == "+") {
+		val = CalcBinary.Memory.firstValue.value + CalcBinary.Memory.secondValue.value;
+	}
+	else if (CalcBinary.Memory.operation.value == "-") {
+		val = CalcBinary.Memory.firstValue.value - CalcBinary.Memory.secondValue.value;
+	}
+	else if (CalcBinary.Memory.operation.value == "*") {
+		val = CalcBinary.Memory.firstValue.value * CalcBinary.Memory.secondValue.value;
+	}
+	else if (CalcBinary.Memory.operation.value == "/") {
+		val = CalcBinary.Memory.firstValue.value / CalcBinary.Memory.secondValue.value;
+	}
+	console.log("do calculation val: " + val);
+	return val;
+},
+
 button0Handler : function() {
-	
+	CalcBinary.View.textRow.value = CalcBinary.addToNumber("0");
+	document.getElementById("textRowBinary").value = CalcBinary.View.textRow.value;
 },
 
 button1Handler : function() {
-	
+	CalcBinary.View.textRow.value = CalcBinary.addToNumber("1");
+	document.getElementById("textRowBinary").value = CalcBinary.View.textRow.value;	
 },
 
 buttonTildeHandler : function() {
@@ -160,7 +161,11 @@ buttonTildeHandler : function() {
 },
 
 buttonAddHandler : function() {
-
+	CalcBinary.Memory.secondValue.value = CalcBinary.Memory.currentValue.value;
+	CalcBinary.Memory.operation.value = "+";
+	CalcBinary.View.textRow.value = "";
+	CalcBinary.Memory.currentValue.reset();
+	document.getElementById("textRowBinary").value = Calc.View.textRow.value;
 },
 
 buttonPercentHandler : function() {
@@ -176,47 +181,78 @@ buttonShiftRightHandler : function() {
 },
 	
 buttonSubtractHandler : function() {
-
+	CalcBinary.Memory.secondValue.value = CalcBinary.Memory.currentValue.value;
+	CalcBinary.Memory.operation.value = "-";
+	CalcBinary.View.textRow.value = "";
+	CalcBinary.Memory.currentValue.reset();
+	document.getElementById("textRowBinary").value = Calc.View.textRow.value;
 },
 
 buttonAmpersandHandler : function() {
-	
+	CalcBinary.Memory.secondValue.value = CalcBinary.Memory.currentValue.value;
+	CalcBinary.Memory.operation.value = "&";
+	CalcBinary.View.textRow.value = "";
+	CalcBinary.Memory.currentValue.reset();
+	document.getElementById("textRowBinary").value = Calc.View.textRow.value;
 },
 
 buttonPipeHandler : function() {
-	
+	CalcBinary.Memory.secondValue.value = CalcBinary.Memory.currentValue.value;
+	CalcBinary.Memory.operation.value = "|";
+	CalcBinary.View.textRow.value = "";
+	CalcBinary.Memory.currentValue.reset();
+	document.getElementById("textRowBinary").value = Calc.View.textRow.value;	
 },
 
 buttonMultiplyHandler : function() {
-
+	CalcBinary.Memory.secondValue.value = CalcBinary.Memory.currentValue.value;
+	CalcBinary.Memory.operation.value = "*";
+	CalcBinary.View.textRow.value = "";
+	CalcBinary.Memory.currentValue.reset();
+	document.getElementById("textRowBinary").value = Calc.View.textRow.value;
 },
 
 buttonDivideHandler : function() {
-
+	CalcBinary.Memory.secondValue.value = CalcBinary.Memory.currentValue.value;
+	CalcBinary.Memory.operation.value = "/";
+	CalcBinary.View.textRow.value = "";
+	CalcBinary.Memory.currentValue.reset();
+	document.getElementById("textRowBinary").value = Calc.View.textRow.value;
 },
 
 buttonMRHandler : function() {
-
+	CalcBinary.View.textRow.value = CalcBinary.Memory.memoryValue.value.toString(2);
+	CalcBinary.Memory.currentValue.value = CalcBinary.Memory.memoryValue.value;
+	document.getElementById("textRowBinary").value = CalcBinary.View.textRow.value;
 },
 
 buttonMminusHandler : function() {
-	
+	CalcBinary.Memory.memoryValue.value = CalcBinary.Memory.memoryValue.value - CalcBinary.Memory.currentValue.value;
 },
 
 buttonMplusHandler : function() {
-	
+	CalcBinary.Memory.memoryValue.value = CalcBinary.Memory.memoryValue.value + CalcBinary.Memory.currentValue.value;
 },
 
 buttonCHandler : function() {
-
+	CalcBinary.View.textRow.value = "";
+    CalcBinary.Memory.currentValue.reset();
+    document.getElementById("textRowBinary").value = CalcBinary.View.textRow.value;
 },	
 
 buttonMCHandler : function() {
-
+	CalcBinary.Memory.memoryValue.value = 0;
 },
 
 buttonEqualsHandler : function() {
-
+    CalcBinary.Memory.firstValue.value = CalcBinary.Memory.secondValue.value;
+    CalcBinary.Memory.secondValue.value = CalcBinary.Memory.currentValue.value;
+	var num = CalcBinary.doCalculation();
+	CalcBinary.Memory.secondValue.value = num;
+	CalcBinary.Memory.currentValue.string = num.toString(2);
+	CalcBinary.Memory.currentValue.value = num;
+    CalcBinary.View.textRow.value = CalcBinary.Memory.currentValue.string;
+    document.getElementById("textRowBinary").value = CalcBinary.View.textRow.value;
 },
 
 
